@@ -62,10 +62,12 @@ ssize_t process_http(int sockfd, char *host, char *page, char *poststr)
 		 "%s", page, host, strlen(poststr), poststr);
 
 	write(sockfd, sendline, strlen(sendline));
+	/*	
 	while ((n = read(sockfd, recvline, MAXLINE)) > 0) {
 		recvline[n] = '\0';
 		printf("%s", recvline);
 	}
+	*/
 	return n;
 
 }
@@ -78,7 +80,7 @@ int main(void)
 	//********** You can change. Puy any values here *******
 	char *hname = "http://131.128.51.103:8010";
 	char *page = "/";
-	char *poststr = "mode=login&user=test&password=test";
+	char *poststr = "bmp=70";
 	//*******************************************************
 
 	char str[50];
@@ -100,15 +102,22 @@ int main(void)
 	}
 	*/
 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("131.128.51.103");
-	servaddr.sin_port = htons(8010);
-	inet_pton(AF_INET, str, &servaddr.sin_addr);
+	while(1)
+	{
+		printf("Hello\n");
+		process_http(sockfd, hname, page, poststr);
+		printf("end\n");
+		sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		bzero(&servaddr, sizeof(servaddr));
+		servaddr.sin_family = AF_INET;
+		servaddr.sin_addr.s_addr = inet_addr("131.128.51.103");
+		servaddr.sin_port = htons(8010);
+		inet_pton(AF_INET, str, &servaddr.sin_addr);
 
-	connect(sockfd, (SA *) & servaddr, sizeof(servaddr));
-	process_http(sockfd, hname, page, poststr);
+		connect(sockfd, (SA *) & servaddr, sizeof(servaddr));
+	
+	}
+	printf("What?\n");
 	close(sockfd);
 	exit(0);
 
